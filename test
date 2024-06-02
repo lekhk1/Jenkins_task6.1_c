@@ -1,63 +1,72 @@
 pipeline {
     agent any
-    
-    environment { 
-        DIRECTORY_PATH = "C:/Users/lekhk/OneDrive/Desktop"
-        TESTING_ENVIRONMENT = "TestingEnvironment"
-        PRODUCTION_ENVIRONMENT = "YourNameProduction"
-    }
-    
     stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/lekhk1/Jenkins_task6.1_c.git', branch: 'main'
+            }
+        }
         stage('Build') {
             steps {
-                echo "Fetching the source code from the directory path specified by the environment variable: ${DIRECTORY_PATH}"
-                echo "Compiling the code and generating any necessary artifacts"
+                echo 'Stage 1: Build - Building the code using Maven.'
+                echo 'Tool: Maven'
             }
         }
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo "Running unit tests"
-                echo "Running integration tests"
+                echo 'Stage 2: Unit and Integration Tests - Running unit and integration tests.'
+                echo 'Tools: JUnit for unit tests, Selenium for integration tests'
             }
         }
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                echo "Checking the quality of the code"
+                echo 'Stage 3: Code Analysis - Analyzing the code to meet industry standards.'
+                echo 'Tool: SonarQube'
             }
         }
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                echo "Deploying the application to a testing environment specified by the environment variable: ${TESTING_ENVIRONMENT}"
+                echo 'Stage 4: Security Scan - Performing a security scan on the code.'
+                echo 'Tool: OWASP Dependency-Check'
             }
         }
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                script {
-                    echo "Waiting for  manual approval..."
-                    sleep(time: 10, unit: 'SECONDS')
-                }
+                echo 'Stage 5: Deploy to Staging - Deploying the application to a staging server.'
+                echo 'Tool: AWS EC2 instance'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Stage 6: Integration Tests on Staging - Running integration tests on the staging environment.'
+                echo 'Tools: Selenium'
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo "Deploying the code to the production environment: ${PRODUCTION_ENVIRONMENT}"
+                echo 'Stage 7: Deploy to Production - Deploying the application to a production server.'
+                echo 'Tool: AWS EC2 instance'
             }
         }
     }
-    
     post {
-        always {
-            echo 'Pipeline completed.'
-        }
         success {
-            emailext body: 'Pipeline succeeded. All stages completed successfully.',
-                     subject: 'Pipeline Status: Success',
-                     to: 'themixerbase123@gmail.com'
+            emailext (
+                to: 'themixerbase123@gmail.com',
+                subject: "Pipeline Success: ${currentBuild.fullDisplayName}",
+                body: """<p>Pipeline completed successfully.</p>
+                         <p>Check the attached logs for details.</p>""",
+                attachLog: true
+            )
         }
         failure {
-            emailext body: 'Pipeline failed. Check logs for details.',
-                     subject: 'Pipeline Status: Failure',
-                     to: 'themixerbase123@gmail.com'
+            emailext (
+                to: 'themixerbase123@gmail.com',
+                subject: "Pipeline Failure: ${currentBuild.fullDisplayName}",
+                body: """<p>Pipeline failed. Please check the logs.</p>
+                         <p>Check the attached logs for details.</p>""",
+                attachLog: true
+            )
         }
     }
-} 
+}
