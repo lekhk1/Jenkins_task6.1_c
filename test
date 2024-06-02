@@ -1,7 +1,7 @@
 pipeline {
     agent any
     
-    environment {
+    environment { 
         DIRECTORY_PATH = "C:/Users/lekhk/OneDrive/Desktop"
         TESTING_ENVIRONMENT = "TestingEnvironment"
         PRODUCTION_ENVIRONMENT = "YourNameProduction"
@@ -33,7 +33,7 @@ pipeline {
         stage('Approval') {
             steps {
                 script {
-                    echo "Waiting for manual approval..."
+                    echo "Waiting for  manual approval..."
                     sleep(time: 10, unit: 'SECONDS')
                 }
             }
@@ -60,4 +60,4 @@ pipeline {
                      to: 'themixerbase123@gmail.com'
         }
     }
-}
+} 
