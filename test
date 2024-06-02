@@ -57,7 +57,7 @@ pipeline {
                 body: """<p>Pipeline completed successfully.</p>
                          <p>Check the attached logs for details.</p>""",
                 attachLog: true,
-                attachmentsPattern: '**/target/*.log'
+                attachmentsPattern: '*.log'
             )
         }
         failure {
@@ -67,7 +67,7 @@ pipeline {
                 body: """<p>Pipeline failed. Please check the logs.</p>
                          <p>Check the attached logs for details.</p>""",
                 attachLog: true,
-                attachmentsPattern: '**/target/*.log'
+                attachmentsPattern: '*.log'
             )
         }
     }
