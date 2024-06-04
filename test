@@ -1,112 +1,66 @@
 pipeline {
     agent any
-    
-    environment {
-        DIRECTORY_PATH = 'https://github.com/lekhk1/Jenkins_task6.1_c.git'
-        TESTING_ENVIRONMENT = 'Staging'
-        PRODUCTION_ENVIRONMENT = 'Production' 
-    }
-    
     stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/lekhk1/Jenkins_task6.1_c.git', branch: 'main'
+            }
+        }
         stage('Build') {
             steps {
-                echo 'Building the code...'
-                //sh 'mvn clean install' // Placeholder for Maven build command test
+                echo 'Stage 1: Build - Building the code using Maven.'
+                echo 'Tool: Maven'
             }
         }
-        
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit tests...'
-                //sh 'mvn test' // Placeholder for running unit tests with Maven
-                echo 'Running integration tests...'
-                //sh 'mvn integration-test' // Placeholder for running integration tests
-            }
-            
-            post {
-                success {
-                    // Send email notification on test success
-                    emailext body: "Test Stage: Success\n\nPlease find attached test logs.",
-                             subject: "Pipeline Test Status: Success",
-                             to: 'themixerbase123@gmail.com',
-                             attachmentsPattern: "sample.log"
-                }
-                failure {
-                    // Send email notification on test failure
-                    emailext body: "Test Stage: Failure\n\nPlease find attached test logs.",
-                             subject: "Pipeline Test Status: Failure",
-                             to: 'themixerbase123@gmail.com',
-                             attachmentsPattern: "sample.log"
-                }
+                echo 'Stage 2: Unit and Integration Tests - Running unit and integration tests.'
+                echo 'Tools: JUnit for unit tests, Selenium for integration tests'
             }
         }
-        
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code...'
-                //sh 'sonar-scanner' // Placeholder for SonarQube code analysis
+                echo 'Stage 3: Code Analysis - Analyzing the code to meet industry standards.'
+                echo 'Tool: SonarQube'
             }
         }
-        
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan...'
-                //sh 'owasp-zap -scan' // Placeholder for OWASP ZAP security scan
-            }
-            
-            post {
-                success {
-                    // Send email notification on security scan success
-                    emailext body: "Security Scan Stage: Success\n\nPlease find attached security scan logs.",
-                             subject: "Pipeline Security Scan Status: Success",
-                             to: 'themixerbase123@gmail.com',
-                             attachmentsPattern: "*.log"
-                }
-                failure {
-                    // Send email notification on security scan failure
-                    emailext body: "Security Scan Stage: Failure\n\nPlease find attached security scan logs.",
-                             subject: "Pipeline  Security Scan Status: Failure",
-                             to: 'themixerbase123@gmail.com',
-                             attachmentsPattern: "*.log"
-                }
+                echo 'Stage 4: Security Scan - Performing a security scan on the code.'
+                echo 'Tool: OWASP Dependency-Check'
             }
         }
-        
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging environment...'
-                //sh 'ssh user@staging-server "deploy-script.sh"' // Placeholder for deployment to staging server
+                echo 'Stage 5: Deploy to Staging - Deploying the application to a staging server.'
+                echo 'Tool: AWS EC2 instance'
             }
         }
-        
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging...'
-                //sh 'mvn verify' // Placeholder for running tests on staging environment
+                echo 'Stage 6: Integration Tests on Staging - Running integration tests on the staging environment.'
+                echo 'Tools: Selenium'
             }
         }
-        
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production environment...'
-                //sh 'ssh user@production-server "deploy-script.sh"' // Placeholder for deployment to production server
+                echo 'Stage 7: Deploy to Production - Deploying the application to a production server.'
+                echo 'Tool: AWS EC2 instance'
             }
         }
     }
-    
     post {
-        always {
-            echo 'Pipeline completed.'
-        }
         success {
-            emailext body: 'Pipeline succeeded. All stages completed successfully.',
-                     subject: 'Pipeline Status: Success',
-                     to: 'themixerbase123@gmail.com'
+            mail to: 'lekhkansara10@gmail.com',
+                 subject: "Pipeline Success: ${currentBuild.fullDisplayName}",
+                 body: "Pipeline completed successfully. Below are the attached logs."
+                  attachmentsPattern: "*.log"
         }
         failure {
-            emailext body: 'Pipeline failed. Check logs for details.',
-                     subject: 'Pipeline Status: Failure',
-                     to: 'themixerbase123@gmail.com'
+            mail to: 'lekhkansara10@gmail.com',
+                 subject: "Pipeline Failure: ${currentBuild.fullDisplayName}",
+                 body: "Pipeline failed. Please check the logs."
+                  attachmentsPattern: "*.log"
         }
     }
 }
